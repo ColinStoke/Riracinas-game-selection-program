@@ -38,6 +38,12 @@
 
         ds_game, locked
 
+    I also use this file to denote whether the game is finished or not. I do this by replacing unlocked or locked with the word "finished".
+
+    example:
+
+        ds_game, finished
+
 ### Finished_Games_List.txt
 
     When a game is finished, it will be added to a line in this file. Pretty simple.
