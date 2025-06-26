@@ -26,7 +26,11 @@
 
         locked_game, prereq_1|prereq_2
     
-    For games that had an AND prerequesite, I simply added a line for each prereq respectively
+    For games that had an AND prerequesite, I used a ++ operator to denote that there are 2 games that need to be finished to unlock that game
+
+    example:
+
+        locked_game, prereq_1++prereq_2
 
 ### Total_Games_List.txt
 
