@@ -27,8 +27,7 @@ if __name__ == '__main__':
     total_games_list = list() #list of all games total
     prereq_games = list() #list of all prereq games
     newly_unlocked_games = list() #list of all newly unlocked games
-
-    locked_games = dict() #dict of all locked games and their prereqs
+    prereq_list = list() #list of all prereqs
 
     game_name : str #name of the game extracted from any games file
     locked_status : str #status of the game extracted from the total_games file
@@ -41,8 +40,10 @@ if __name__ == '__main__':
     valid_game : bool = False #trigger boolean to end the game selection loop
     AND_flag : bool = False #boolean to say that there was an AND prereq
     found_line : bool = False #boolean to trigger end of while loop for finding the correct line to modify
+    is_prereq : bool = False #boolean that denotes whether finished game is a prereq or not
 
     counter : int #counter variable
+    prereq_list_index : int
 
     #open the file and read all lines
     with open("Total_Games_List.txt") as total_games_file:
@@ -107,22 +108,17 @@ if __name__ == '__main__':
                 splitLine = full_line.split(", ")
 
                 game_name = splitLine[0]
-                prereq_game = splitLine[1]
+                prereq_game_line = splitLine[1]
 
-                split2 = prereq_game.split("++") #split to check for AND prerequesites
+                prereq_game_line = prereq_game_line.strip("\n")
 
-                if len(split2) > 1:
-                    AND_flag = True
-
-                for prereq_game in split2:
-                    locked_games[prereq_game] = game_name
+                prereq_list.append(prereq_game_line)
                 
-            
             valid_game = False
 
             while(not valid_game):
 
-                finished_game = input("\nWhat game did you finish? >> ")
+                finished_game = input("What game did you finish? >> ")
 
                 if finished_game in total_games_list:
                     print("\nGame Found! Adding game to Finished_Games_List.txt...\n")
@@ -130,34 +126,41 @@ if __name__ == '__main__':
                     valid_game = True
 
                     with open("Finished_Games_List.txt", "a") as finished_file:
-                        finished_file.write(finished_game)
+                        finished_file.write(finished_game + "\n")
                         finished_file.close()
-                    
-                    if finished_game in locked_games:
 
-                        if (AND_flag):
-                            
-                            if split2[0] == finished_game:
-                                other_prereq = split2[1]
-                            else:
-                                other_prereq = split2[0]
-
-                        
-                        counter = 0
-                        found_line = False
-
-                        while(not found_line):
-
-                            if splitLine[1] == prereq_game:
-                                
-                                if AND_flag:
-                                    locked_games_all_lines[counter] = f"{game_name}, {other_prereq}\n"
+                    counter = 0
+                    is_prereq = False
+                    while(counter < len(prereq_list)):
+                        split2 = prereq_list[counter].split("++")
+                        if(finished_game in split2):
+                            prereq_list_index = counter
+                            is_prereq = True
+                            if len(split2) > 1:
+                                AND_flag = True
+                                if finished_game == split2[0]:
+                                    other_prereq = split2[1]
                                 else:
-                                    locked_games_all_lines.pop(counter)
+                                    other_prereq = split2[0]
+                            break
+                        
+                        split2 = prereq_list[counter].split("|")
+                        if(finished_game in split2):
+                            prereq_list_index = counter
+                            is_prereq = True
 
-                                found_line = True
+                        counter += 1
+                    
+                    if is_prereq:
+                        
+                        game_name = locked_games_all_lines[prereq_list_index].split(", ")[0]
+                        
+                        if AND_flag:
+                            locked_games_all_lines[prereq_list_index] = f"{game_name}, {other_prereq}\n"
+                        else:
+                            locked_games_all_lines.pop(prereq_list_index)
 
-                            counter += 1
+                        found_line = True
 
                         with open("Locked_Games_List.txt", "w") as locked_games_file:
                             locked_games_file.writelines(locked_games_all_lines)
@@ -170,7 +173,7 @@ if __name__ == '__main__':
                         while(not found_line):
 
                             if total_games_list[counter] == game_name:
-                                total_games_all_lines[counter] = f"{game_name}, unlocked"
+                                total_games_all_lines[counter] = f"{game_name}, unlocked\n"
                                 found_line = True
 
                             counter += 1
