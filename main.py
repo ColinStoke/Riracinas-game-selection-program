@@ -88,7 +88,16 @@ if __name__ == '__main__':
                 try:
 
                     select_num = int(input("How many games would you like to select?\n>> ")) #throws an error if a non-integer is passed
-                    valid_integer = True
+
+                    if(select_num > 0):
+                        valid_integer = True
+                        if(select_num > len(unlocked_games)):
+                            select_num = len(unlocked_games)
+                            print(f"\nNumber too large! Defaulting to largest possible number: {select_num}")
+                    else:
+                        valid_integer = True
+                        print("\nNumber too small! Defaulting to 1.")
+                        select_num = 1
 
                 except: #catches the error
                     print("\n!!---Invalid input. Please pass an integer value to the program---!!\n")
@@ -106,7 +115,7 @@ if __name__ == '__main__':
                 locked_games_all_lines = locked_file.readlines()
                 locked_file.close()
             
-            #build the locked games dictionary
+            #build the prerequesite games list
             for full_line in locked_games_all_lines:
 
                 splitLine = full_line.split(", ")
@@ -132,6 +141,17 @@ if __name__ == '__main__':
                     with open("Finished_Games_List.txt", "a", encoding="utf-8") as finished_file:
                         finished_file.write(finished_game + "\n")
                         finished_file.close()
+
+                    for i in range(len(total_games_all_lines)):
+                        
+                        if finished_game == total_games_all_lines[i].split(", ")[0]:
+                            counter = i
+                    
+                    total_games_all_lines[counter] = f"{finished_game}, finished\n"
+
+                    with open("Total_Games_List.txt", "w", encoding="utf-8") as total_games_file:
+                        total_games_file.writelines(total_games_all_lines)
+                        total_games_file.close()
 
                     prereq_list_index.clear()
                     other_prereq_list.clear()
@@ -209,8 +229,3 @@ if __name__ == '__main__':
             exit_trigger = True
         else:
             print("Invalid input. See the Usage section in the readme for more details")
-
-        #TODO: write Usage section in the readme
-        #      Code logic that unlocks the games when the finish option is selected
-        #      Make a GUI???? Maybe
-        #      Make the program epic and professional and not with debug stuff everywhere

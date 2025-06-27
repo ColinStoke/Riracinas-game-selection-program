@@ -62,4 +62,21 @@
 
 ## Usage
 
-    unfinished 
+    For now: Run the python script however you can in the folder with all of the .txt files. When prompted with the menu:
+
+    ----------Welcome to Riracina's Game Picker and Tracker!----------
+
+    What would you like to do?
+    1. Select a subset of games
+    2. Finish a game
+    
+    Type "exit" to exit the program.
+
+    >> 
+
+    Type the number of the option you would like into your keyboard and hit enter.
+
+    "Select a subset of games" allows the user to generate a list of however many games they wish from the list of unlocked games for use however they wish.
+    After selecting this option, you will be propmpted to enter an integer. If you choose an integer that is less than 1 or greater than the max number of unlocked games, it will default to either 1 or the max amount of unlocked games respectively.
+
+    The second option is to log finishing a game. This will mark the game as finished and will no longer be eiligible for selection again. This will also automatically unlock games that are locked by it. 
